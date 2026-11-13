@@ -8,11 +8,13 @@ local SOURCES = {
         url = "https://raw.githubusercontent.com/cmusphinx/cmudict/74790861f652b15e4ac49015a90074ad62a27690/cmudict.dict",
         minimumBytes = 3000000,
         expectedBytes = 3600000,
+        sha256 = "81917843c7f44ce2b094ac63873c2c7a4cf802040792c455ba3ca406891c3d22",
     },
     [IpaEnglish.IPADICT_UK_FILE] = {
         url = "https://raw.githubusercontent.com/open-dict-data/ipa-dict/972cd67dd5f96bc5660e28070cde26e3928abcd7/data/en_UK.txt",
         minimumBytes = 1000000,
         expectedBytes = 1600000,
+        sha256 = "221394caef0cf723b4f2df81a98ac33191293257b88aed5b1fb89466d3a0dc77",
     },
 }
 

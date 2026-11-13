@@ -3,3 +3,4 @@ __pycache__/
 .ruff_cache/
 ._*
 .DS_Store
+ipaoverlay.koplugin.zip

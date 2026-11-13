@@ -69,4 +69,19 @@ function UkStress.moveMarksToSyllableStart(ipa)
     return table.concat(result)
 end
 
+-- Same as moveMarksToSyllableStart, and a word with a single vowel gets no stress mark.
+function UkStress.convert(ipa)
+    local moved = UkStress.moveMarksToSyllableStart(ipa)
+    local vowels = 0
+    for _position, token in ipairs(tokenize(moved)) do
+        if isVowel(token) then
+            vowels = vowels + 1
+        end
+    end
+    if vowels <= 1 then
+        return (moved:gsub("ˈ", ""):gsub("ˌ", ""))
+    end
+    return moved
+end
+
 return UkStress

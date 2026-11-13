@@ -3,6 +3,7 @@ local NetworkMgr = require("ui/network/manager")
 local UIManager = require("ui/uimanager")
 local socket = require("socket")
 local http = require("socket.http")
+local sha2 = require("ffi/sha2")
 local socketutil = require("socketutil")
 local _ = require("gettext")
 
@@ -28,11 +29,14 @@ local function closeStatus()
 end
 
 -- Sink that writes to file and reports the percentage every 10% so the screen keeps updating.
+-- The returned finish() gives the SHA256 of everything written.
 local function progressSink(file, expectedBytes, label)
     local received, lastReported = 0, -1
     local fileSink = socketutil.file_sink(file)
-    return function(chunk, err)
+    local feedHash = sha2.sha256()
+    local sink = function(chunk, err)
         if chunk then
+            feedHash(chunk)
             received = received + #chunk
             local percent = math.min(99, math.floor(100 * received / expectedBytes / 10) * 10)
             if percent ~= lastReported then
@@ -41,6 +45,9 @@ local function progressSink(file, expectedBytes, label)
             end
         end
         return fileSink(chunk, err)
+    end
+    return sink, function()
+        return feedHash()
     end
 end
 
@@ -51,15 +58,16 @@ local function fetch(source, targetPath, label)
         return false, "cannot write " .. partialPath
     end
     socketutil:set_timeout(socketutil.FILE_BLOCK_TIMEOUT, socketutil.FILE_TOTAL_TIMEOUT)
-    local code = socket.skip(1, http.request({
-        url = source.url,
-        method = "GET",
-        sink = progressSink(file, source.expectedBytes, label),
-    }))
+    local sink, finishHash = progressSink(file, source.expectedBytes, label)
+    local code = socket.skip(1, http.request({ url = source.url, method = "GET", sink = sink }))
     socketutil:reset_timeout()
     if code ~= 200 then
         os.remove(partialPath)
         return false, "HTTP " .. tostring(code)
+    end
+    if finishHash() ~= source.sha256 then
+        os.remove(partialPath)
+        return false, "checksum mismatch"
     end
     return os.rename(partialPath, targetPath)
 end

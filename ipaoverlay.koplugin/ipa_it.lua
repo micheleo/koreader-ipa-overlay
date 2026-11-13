@@ -37,6 +37,18 @@ local function normalize(word)
     return word
 end
 
+-- Written without accent, stressed on the third to last syllable (sdrucciole). Not derivable from the spelling.
+local ANTEPENULTIMATE = {}
+for word in ([[
+    tavolo tavola aquila albero anima camera macchina medico musica numero ordine pagina simpatico telefono
+    difficile facile giovane lettera libero subito nuvola ultimo ultima unico unica possibile impossibile
+    terribile amabile utile inutile debole nobile povero povera povere poveri tavoli tavole alberi anime camere
+    macchine medici numeri pagine lettere nuvole camera piccolo piccola piccoli piccole simile simili spirito
+    esercito semplice semplici facili difficili giovani
+]]):gmatch("%S+") do
+    ANTEPENULTIMATE[word] = true
+end
+
 function IpaItalian.convert(rawWord)
     local list = letters(normalize(rawWord))
     local units = {}
@@ -176,7 +188,9 @@ function IpaItalian.convert(rawWord)
                 nuclei[#nuclei + 1] = position
             end
         end
-        if #nuclei >= 2 then
+        if #nuclei >= 3 and ANTEPENULTIMATE[normalize(rawWord)] then
+            units[nuclei[#nuclei - 2]].stress = 1
+        elseif #nuclei >= 2 then
             units[nuclei[#nuclei - 1]].stress = 1
         end
     end

@@ -24,11 +24,23 @@ local function onsetStart(units, vowelIndex)
     return start
 end
 
+local function vowelCount(units)
+    local count = 0
+    for _position, unit in ipairs(units) do
+        if unit.vowel then
+            count = count + 1
+        end
+    end
+    return count
+end
+
 -- units: array of { ipa = string, vowel = bool, stress = 0|1|2 }
+-- A word with a single vowel gets no stress mark, there is nothing to tell apart.
 function Phonology.render(units)
     local marks = {}
+    local isMonosyllable = vowelCount(units) <= 1
     for index, unit in ipairs(units) do
-        if unit.vowel and unit.stress and unit.stress > 0 then
+        if not isMonosyllable and unit.vowel and unit.stress and unit.stress > 0 then
             local start = onsetStart(units, index)
             marks[start] = unit.stress == 1 and "ˈ" or "ˌ"
         end

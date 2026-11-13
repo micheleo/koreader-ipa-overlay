@@ -66,4 +66,30 @@ function Words.lookup(text, lookup, options)
     return found
 end
 
+-- Single letters that Italian elides before a vowel (l'aquila, d'amore). They sound like the letter itself.
+local ELIDED_LETTERS = { l = true, d = true, s = true, m = true, n = true, t = true, v = true }
+
+-- Joins the IPA of the entries of one crengine word into one string. An elided word is one unit of speech
+-- (l'aquila is ˈlakwila, not l + ˈakwila), so with an apostrophe the parts are glued and a lone elided letter
+-- goes inside the stress mark of the next part.
+function Words.joinIpa(token, entries)
+    local glued = token:find("'", 1, true) or token:find("’", 1, true)
+    local parts, pendingLetter = {}, nil
+    for _position, entry in ipairs(entries) do
+        local lowered = entry.word:lower()
+        if entry.ipa then
+            local ipa = entry.ipa
+            if pendingLetter then
+                local mark = ipa:match("^ˈ")
+                ipa = mark and (mark .. pendingLetter .. ipa:sub(#mark + 1)) or (pendingLetter .. ipa)
+                pendingLetter = nil
+            end
+            parts[#parts + 1] = ipa
+        elseif glued and ELIDED_LETTERS[lowered] then
+            pendingLetter = lowered
+        end
+    end
+    return #parts > 0 and table.concat(parts, glued and "" or " ") or nil
+end
+
 return Words

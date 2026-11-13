@@ -129,7 +129,7 @@ function IpaEnglish:lookup(word)
     local lowered = word:lower()
     local raw = self.british[lowered]
     if raw then
-        self.converted[lowered] = self.converted[lowered] or UkStress.moveMarksToSyllableStart(raw)
+        self.converted[lowered] = self.converted[lowered] or UkStress.convert(raw)
         return self.converted[lowered]
     end
     local phones = self.cmudict[lowered]

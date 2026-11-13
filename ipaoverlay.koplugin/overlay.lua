@@ -31,15 +31,19 @@ local SCREEN_EDGE_MARGIN = 6
 local MAX_EMPTY_BOXES_IN_A_ROW = 3
 
 function IpaOverlay:ipaForToken(token, engine, options)
-    local parts = {}
-    for _index, entry in ipairs(Words.lookup(token, function(word)
+    return Words.joinIpa(token, Words.lookup(token, function(word)
         return engine:lookup(word)
-    end, options)) do
-        if entry.ipa then
-            parts[#parts + 1] = entry.ipa
-        end
-    end
-    return #parts > 0 and table.concat(parts, " ") or nil
+    end, options))
+end
+
+function IpaOverlay:textBetween(startPosition, endPosition)
+    local range = self.ui.document:getTextFromXPointers(startPosition, endPosition, false)
+    return type(range) == "table" and range.text or range
+end
+
+function IpaOverlay:isApostrophe(startPosition, endPosition)
+    local gap = self:textBetween(startPosition, endPosition)
+    return gap == "'" or gap == "’"
 end
 
 -- crengine only returns one box per line for a range, so every word is queried on its own.
@@ -53,6 +57,7 @@ function IpaOverlay:computePageWords(pageStart)
     local words = {}
     local cursor = pageStart
     local emptyInARow = 0
+    local previous
     for _count = 1, MAX_WORDS_PER_PAGE do
         local wordEnd = document:getNextVisibleWordEnd(cursor)
         if not wordEnd or wordEnd == cursor then
@@ -67,13 +72,33 @@ function IpaOverlay:computePageWords(pageStart)
             end
         else
             emptyInARow = 0
-            local range = document:getTextFromXPointers(wordStart, wordEnd, false)
-            local text = type(range) == "table" and range.text or range
+            local text = self:textBetween(wordStart, wordEnd)
+            local box = boxes[#boxes]
+            local splitAcrossLines = #boxes > 1
+            local joined = text and previous and self:isApostrophe(previous.endPosition, wordStart)
+            if joined then
+                -- crengine ends a word at the apostrophe: didn't arrives as didn + t, l'aquila as l + aquila
+                text = previous.text .. "'" .. text
+                if previous.box.y == box.y then
+                    box = { x = previous.box.x, y = box.y, w = box.x + box.w - previous.box.x, h = box.h }
+                    splitAcrossLines = previous.splitAcrossLines
+                end
+            end
             local ipa = text and self:ipaForToken(text, engine, options)
+            if joined and not ipa then
+                ipa = previous.ipa
+            end
+            if joined and previous.entryIndex then
+                table.remove(words, previous.entryIndex)
+            end
             if ipa then
                 -- A hyphenated word is drawn on its last line fragment, which starts at the free left margin
-                words[#words + 1] = { box = boxes[#boxes], ipa = ipa, splitAcrossLines = #boxes > 1 }
+                words[#words + 1] = { box = box, ipa = ipa, splitAcrossLines = splitAcrossLines }
             end
+            previous = {
+                endPosition = wordEnd, text = text, box = box, ipa = ipa, splitAcrossLines = splitAcrossLines,
+                entryIndex = ipa and #words or nil,
+            }
         end
         cursor = wordEnd
     end
