@@ -57,7 +57,7 @@ local function hasAntepenultimateStress(word)
         return true
     end
     for _position, ending in ipairs(ANTEPENULTIMATE_ENDINGS) do
-        if #word > #ending and word:sub(-#ending) == ending then
+        if #word >= #ending and word:sub(-#ending) == ending then
             return true
         end
     end

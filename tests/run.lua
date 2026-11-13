@@ -129,6 +129,8 @@ check("it c'era", joined("c'era"), "ˈtʃera")
 check("it amichevole suffix", IpaItalian.convert("amichevole"), "amiˈkevole")
 check("it amabile suffix", IpaItalian.convert("amabile"), "aˈmabile")
 check("it possibile suffix", IpaItalian.convert("possibile"), "posˈsibile")
+check("it abile is a whole suffix word", IpaItalian.convert("abile"), "ˈabile")
+check("it l'abile", joined("l'abile"), "ˈlabile")
 check("it penultimate noun", IpaItalian.convert("romano"), "roˈmano")
 
 -- Elision is glued into one word

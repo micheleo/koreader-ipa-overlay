@@ -92,9 +92,9 @@ function Downloader.run(engine, dataDirectory, onDone)
                 local target = dataDirectory .. "/" .. name
                 local label = _("Downloading dictionary") .. " " .. position .. "/" .. #missing
                 showStatus(label)
-                local startedAt = os.time()
+                local startedAt = socket.gettime()
                 success, reason = fetch(source, target, label)
-                logger.info("ipaoverlay: download of", name, success and "ok" or reason, "took", os.time() - startedAt, "s")
+                logger.info("ipaoverlay: download of", name, success and "ok" or reason, "took", string.format("%.1f", socket.gettime() - startedAt), "s")
                 if not success then
                     break
                 end

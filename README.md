@@ -46,7 +46,10 @@ See NOTICE for sources and licenses. The UK data is GPL-3.0.
 
 ## Performance
 
-On the Paperwhite 11th gen a page scan takes about 0.1 s for 100 words (from the KOReader log, every page is cached). From opening a book to the first IPA took about 9 s, which includes book layout and loading the dictionary into memory (about 25 MB of Lua memory measured on x86).
+On the Paperwhite 11th gen (from the KOReader log):
+- A page scan takes about 0.1 s for 100 words, and every page is cached.
+- Opening a book to the first IPA took about 9 s, which includes book layout and loading the dictionary into memory (about 25 MB of Lua memory measured on x86).
+- The one-time download of the 3.6 MB US dictionary, including the SHA256 check, took 3.6 s.
 
 ## How it works
 

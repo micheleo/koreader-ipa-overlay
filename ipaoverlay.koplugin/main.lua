@@ -10,6 +10,7 @@ local _ = require("gettext")
 local ConfirmBox = require("ui/widget/confirmbox")
 local Downloader = require("downloader")
 local Engines = require("engines")
+local IpaEnglish = require("ipa_en")
 local IpaOverlay = require("overlay")
 local Words = require("words")
 
@@ -209,6 +210,18 @@ function IpaPlugin:withEngine(variant, callback)
     end
 end
 
+function IpaPlugin:deleteDictionaries()
+    for _position, engine in ipairs(Engines.list()) do
+        for _index, name in ipairs(engine.files) do
+            os.remove(self:dataDirectory() .. "/" .. name)
+        end
+    end
+    self.engineInstances = {}
+    IpaEnglish.clearCache()
+    self:refreshOverlay()
+    self:notify(_("Downloaded dictionaries deleted. They are downloaded again when needed."))
+end
+
 function IpaPlugin:radioItems(choices, key, default, label)
     local items = {}
     for _index, choice in ipairs(choices) do
@@ -279,6 +292,18 @@ function IpaPlugin:addToMainMenu(menu_items)
                 end),
             },
             { text = _("Language"), sub_item_table = languageItems },
+            {
+                text = _("Delete downloaded dictionaries"),
+                callback = function()
+                    UIManager:show(ConfirmBox:new{
+                        text = _("Delete the downloaded pronunciation dictionaries (about 5 MB)?"),
+                        ok_text = _("Delete"),
+                        ok_callback = function()
+                            self:deleteDictionaries()
+                        end,
+                    })
+                end,
+            },
         },
     }
 end

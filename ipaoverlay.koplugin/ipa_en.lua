@@ -108,6 +108,11 @@ local function loadShared(path, parseLine)
     return sharedTables[path]
 end
 
+-- Frees the loaded dictionaries, used after the files are deleted.
+function IpaEnglish.clearCache()
+    sharedTables = {}
+end
+
 IpaEnglish.CMUDICT_FILE = "cmudict.dict"
 IpaEnglish.IPADICT_UK_FILE = "en_UK.txt"
 IpaEnglish.arpabetToIpa = arpabetToIpa
