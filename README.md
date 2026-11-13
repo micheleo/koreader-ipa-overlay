@@ -2,6 +2,10 @@
 
 Shows the IPA pronunciation above every word of an English or Italian EPUB, with a per-book toggle. The book file is never modified.
 
+![Demo](docs/demo.gif)
+
+> **Made with AI.** Most of the code, tests and documentation of this plugin were written by an AI coding assistant (Claude Code by Anthropic), directed and tested on a real Kindle by the author. The source is open, read it before you run it. See the disclaimer below.
+
 ![English US](docs/screenshots/en_us.png)
 
 | English UK | Italian (experimental) |
@@ -71,6 +75,14 @@ An overlay draws the IPA above each word of the current page when the page is pa
     make zip        # release zip
 
 `tools/build_ipadict_uk.py` is the reference for `uk_stress.lua`. `tests/uk_stress_fixtures.lua` holds its outputs, regenerate them if the rule changes.
+
+## Disclaimer
+
+**Use at your own risk.** This software is provided "as is", without warranty of any kind, express or implied, including merchantability, fitness for a particular purpose and non-infringement. The author is not liable for any claim, damage, data loss or device problem arising from its use. This is the standard AGPL-3.0 disclaimer (see LICENSE, sections 15 and 16), repeated here in plain words.
+
+- The plugin changes the line spacing of the books where you turn it on (it goes back to 100% when you turn it off) and writes the downloaded dictionaries to `koreader/ipaoverlay/`. Back up your device before installing any third-party plugin.
+- The IPA is generated automatically from dictionaries and rules, and it can be wrong, especially for Italian. Do not use it as an authoritative pronunciation reference.
+- Unofficial third-party project, not affiliated with or endorsed by KOReader, Amazon, Kobo, Carnegie Mellon University or the dictionary authors.
 
 ## License
 

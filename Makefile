@@ -19,6 +19,6 @@ emulator:
 # Release zip for users who do not want to copy the folder by hand.
 zip:
 	rm -f ipaoverlay.koplugin.zip
-	COPYFILE_DISABLE=1 zip -rq ipaoverlay.koplugin.zip ipaoverlay.koplugin -x '*/._*' -x '*/.DS_Store'
+	COPYFILE_DISABLE=1 zip -rq ipaoverlay.koplugin.zip ipaoverlay.koplugin LICENSE NOTICE README.md -x '*/._*' -x '*/.DS_Store'
 
 .PHONY: zip

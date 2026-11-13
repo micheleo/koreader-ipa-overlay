@@ -1,6 +1,9 @@
 IPA overlay for KOReader
 Copyright (C) 2026 Michele Ongaro. Licensed under AGPL-3.0-or-later, see LICENSE.
 
+Most of the code was written with an AI coding assistant (Claude Code by Anthropic),
+directed and tested by the author. No warranty, use at your own risk, see README and LICENSE.
+
 Dictionary data is NOT part of this repository and is not covered by the AGPL.
 The plugin downloads the files unmodified from the upstream repositories (pinned commits,
 see engines.lua) onto the user's device and converts them on the device:

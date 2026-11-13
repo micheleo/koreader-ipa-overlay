@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.1.1 (2026-11-13)
+
+- The release zip now includes LICENSE, NOTICE and README.
+- README: demo GIF, note that the project was made with AI assistance, disclaimer (use at your own risk, no warranty).
+- NOTICE: AI assistance and no-warranty line.
+
 ## 0.1.0 (2026-11-13)
 
 - IPA overlay above every word, per book toggle, size, color and language options.
