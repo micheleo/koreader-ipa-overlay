@@ -13,7 +13,7 @@ Screenshots come from Alice in Wonderland (public domain) and a short generated 
 ## Status and limits
 
 - English US and UK are dictionary based and reliable for common words. Words missing from the dictionary show nothing.
-- **Italian is experimental.** Pronunciation comes from rules: stress on the penultimate syllable unless the word is accented or in a small list of common words stressed on the third to last syllable (tavolo, aquila, subito). Every other such word gets the wrong stress. Open and closed e/o are not marked, `z` is never `dz`.
+- **Italian is experimental.** Pronunciation comes from rules: stress on the penultimate syllable unless the word is accented, ends in -abile, -ibile or -evole, or is in a small list of common words stressed on the third to last syllable (tavolo, aquila, subito). Every other such word gets the wrong stress, notably third person plural verbs (parlano, guardano). Open and closed e/o are not marked, `z` is never `dz`.
 - Works only in page view mode and only on EPUB and other reflowable documents. PDF and scroll mode show nothing.
 - Line spacing grows to make room for the IPA row, so a page holds fewer lines (see below). It goes back to 100% when you turn the overlay off.
 - Words with a single vowel get no stress mark.
@@ -28,7 +28,7 @@ Line spacing, overlay off and on:
 
 ## Install
 
-Download `ipaoverlay.koplugin.zip` from the releases page, unzip it and copy the `ipaoverlay.koplugin` folder to `koreader/plugins/` on the device (Kindle, Kobo, ...), then restart KOReader.
+Download `ipaoverlay.koplugin.zip` from the releases page, unzip it and copy the `ipaoverlay.koplugin` folder to `koreader/plugins/` on the device (tested on Kindle, other KOReader devices such as Kobo should work but are untested), then restart KOReader.
 
 From a checkout on macOS: `rsync -rt --delete --exclude '._*' ipaoverlay.koplugin/ <device>/koreader/plugins/ipaoverlay.koplugin/`.
 

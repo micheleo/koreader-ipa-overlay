@@ -1,4 +1,5 @@
 local InfoMessage = require("ui/widget/infomessage")
+local logger = require("logger")
 local NetworkMgr = require("ui/network/manager")
 local UIManager = require("ui/uimanager")
 local socket = require("socket")
@@ -62,6 +63,7 @@ local function fetch(source, targetPath, label)
     local code = socket.skip(1, http.request({ url = source.url, method = "GET", sink = sink }))
     socketutil:reset_timeout()
     if code ~= 200 then
+        pcall(file.close, file)
         os.remove(partialPath)
         return false, "HTTP " .. tostring(code)
     end
@@ -70,16 +72,6 @@ local function fetch(source, targetPath, label)
         return false, "checksum mismatch"
     end
     return os.rename(partialPath, targetPath)
-end
-
-local function fileSize(path)
-    local file = io.open(path, "rb")
-    if not file then
-        return 0
-    end
-    local size = file:seek("end")
-    file:close()
-    return size
 end
 
 -- Downloads the missing files of `engine` into dataDirectory, then calls onDone(success).
@@ -100,11 +92,9 @@ function Downloader.run(engine, dataDirectory, onDone)
                 local target = dataDirectory .. "/" .. name
                 local label = _("Downloading dictionary") .. " " .. position .. "/" .. #missing
                 showStatus(label)
+                local startedAt = os.time()
                 success, reason = fetch(source, target, label)
-                if success and fileSize(target) < source.minimumBytes then
-                    os.remove(target)
-                    success, reason = false, "file too small"
-                end
+                logger.info("ipaoverlay: download of", name, success and "ok" or reason, "took", os.time() - startedAt, "s")
                 if not success then
                     break
                 end

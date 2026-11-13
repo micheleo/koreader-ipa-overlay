@@ -49,6 +49,21 @@ for word in ([[
     ANTEPENULTIMATE[word] = true
 end
 
+-- These endings are always stressed on the third to last syllable (amabile, possibile, amichevole).
+local ANTEPENULTIMATE_ENDINGS = { "abile", "ibile", "evole", "abili", "ibili", "evoli" }
+
+local function hasAntepenultimateStress(word)
+    if ANTEPENULTIMATE[word] then
+        return true
+    end
+    for _position, ending in ipairs(ANTEPENULTIMATE_ENDINGS) do
+        if #word > #ending and word:sub(-#ending) == ending then
+            return true
+        end
+    end
+    return false
+end
+
 function IpaItalian.convert(rawWord)
     local list = letters(normalize(rawWord))
     local units = {}
@@ -188,7 +203,7 @@ function IpaItalian.convert(rawWord)
                 nuclei[#nuclei + 1] = position
             end
         end
-        if #nuclei >= 3 and ANTEPENULTIMATE[normalize(rawWord)] then
+        if #nuclei >= 3 and hasAntepenultimateStress(normalize(rawWord)) then
             units[nuclei[#nuclei - 2]].stress = 1
         elseif #nuclei >= 2 then
             units[nuclei[#nuclei - 1]].stress = 1

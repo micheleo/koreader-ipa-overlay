@@ -125,6 +125,26 @@ function IpaEnglish.new(accent, dataDirectory)
     return setmetatable({ accent = accent, cmudict = cmudict, british = british or {}, converted = {} }, IpaEnglish)
 end
 
+local SIBILANT_ENDINGS = { "s", "z", "ʃ", "ʒ", "tʃ", "dʒ" }
+local VOICELESS_ENDINGS = { "p", "t", "k", "f", "θ" }
+
+local function endsWithAny(ipa, endings)
+    for _position, ending in ipairs(endings) do
+        if ipa:sub(-#ending) == ending then
+            return true
+        end
+    end
+    return false
+end
+
+-- "Alice's" is not in the dictionaries: the base word plus the possessive sound that follows its last sound.
+local function addPossessive(baseIpa)
+    if endsWithAny(baseIpa, SIBILANT_ENDINGS) then
+        return baseIpa .. "ɪz"
+    end
+    return baseIpa .. (endsWithAny(baseIpa, VOICELESS_ENDINGS) and "s" or "z")
+end
+
 function IpaEnglish:lookup(word)
     local lowered = word:lower()
     local raw = self.british[lowered]
@@ -133,7 +153,12 @@ function IpaEnglish:lookup(word)
         return self.converted[lowered]
     end
     local phones = self.cmudict[lowered]
-    return phones and arpabetToIpa(phones, self.accent) or nil
+    if phones then
+        return arpabetToIpa(phones, self.accent)
+    end
+    local base = lowered:match("^(.+)'s$")
+    local baseIpa = base and self:lookup(base)
+    return baseIpa and addPossessive(baseIpa) or nil
 end
 
 return IpaEnglish

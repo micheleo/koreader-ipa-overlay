@@ -66,8 +66,8 @@ function Words.lookup(text, lookup, options)
     return found
 end
 
--- Single letters that Italian elides before a vowel (l'aquila, d'amore). They sound like the letter itself.
-local ELIDED_LETTERS = { l = true, d = true, s = true, m = true, n = true, t = true, v = true }
+-- Single letters that Italian elides before a vowel (l'aquila, d'amore) and how they sound. c' is ci before e (c'è).
+local ELIDED_LETTERS = { l = "l", d = "d", s = "s", m = "m", n = "n", t = "t", v = "v", c = "tʃ" }
 
 -- Joins the IPA of the entries of one crengine word into one string. An elided word is one unit of speech
 -- (l'aquila is ˈlakwila, not l + ˈakwila), so with an apostrophe the parts are glued and a lone elided letter
@@ -86,7 +86,7 @@ function Words.joinIpa(token, entries)
             end
             parts[#parts + 1] = ipa
         elseif glued and ELIDED_LETTERS[lowered] then
-            pendingLetter = lowered
+            pendingLetter = ELIDED_LETTERS[lowered]
         end
     end
     return #parts > 0 and table.concat(parts, glued and "" or " ") or nil
